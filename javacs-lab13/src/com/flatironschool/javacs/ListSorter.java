@@ -63,8 +63,47 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> mergeSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
+        if (list.isEmpty()) return list;
+        if (list.size() == 1) return list;
+        
+        List<T> listFinal = new ArrayList<T>();
+        List<T> listOne = new ArrayList<T>();
+        List<T> listTwo = new ArrayList<T>();
+        for (int i = 0; i < list.size(); i++) {
+        	if (i < (list.size() / 2)) {
+        		listOne.add(list.get(i));
+        	}
+        	else {
+        		listTwo.add(list.get(i));
+        	}	
+        }
+        insertionSort(listOne, comparator);
+        insertionSort(listTwo, comparator);
+
+        int j = 0, k = 0;
+        while (j < listOne.size() && k < listTwo.size()) {
+        	if (comparator.compare(listOne.get(j), listTwo.get(k)) < 0) {
+        		listFinal.add(listOne.get(j));
+        		j++;
+        	}
+        	else {
+        		listFinal.add(listTwo.get(k));
+        		k++;
+        	}
+        }
+        
+        while (j < listOne.size()) {
+        	listFinal.add(listOne.get(j));
+    		j++;
+        }
+        
+        while (k < listTwo.size()) {
+        	listFinal.add(listTwo.get(k));
+    		k++;
+        }
+                
+        
+        return listFinal;
 	}
 
 	/**
@@ -75,7 +114,14 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public void heapSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
+		PriorityQueue<T> priorityQueue = new PriorityQueue<T>(); 
+		priorityQueue.addAll(list);
+		list.removeAll(list);
+
+		while(!priorityQueue.isEmpty()) {
+			list.add(priorityQueue.poll());
+		}
+		
 	}
 
 	
@@ -89,8 +135,35 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> topK(int k, List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
+		PriorityQueue<T> priorityQueue = new PriorityQueue<T>();
+		/*
+    Branch 1: If the heap is not full, add x to the heap.
+
+    Branch 2: If the heap is full, compare x to the smallest 
+    element in the heap. If x is smaller, it cannot be one of the largest k elements, 
+    so you can discard it.
+
+    Branch 3: If the heap is full and x is greater than the smallest 
+    element in the heap, remove the smallest element from the heap and add x.
+		 */
+		
+		for (int i = 0; i < list.size(); i++) {
+			if (priorityQueue.size() < k) {
+				priorityQueue.offer(list.get(i));
+			}
+			else {
+				if (comparator.compare(list.get(i), priorityQueue.peek()) > 0){
+					priorityQueue.poll();
+					priorityQueue.offer(list.get(i));
+				}
+			}
+		}
+		
+		list.removeAll(list);
+		for (int j = 0; j < k; j++) {
+			list.add(priorityQueue.poll());
+		}
+        return list;
 	}
 
 	
